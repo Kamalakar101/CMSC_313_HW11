@@ -2,7 +2,7 @@
 ; ID: CJ88254
 ; Section 1430
 ; Date: 5/12/25
-; Description: 
+; Description: Converts HEX numbers to their ASCII characters. Ex: 0x3D -> '3D'.
 
 SECTION .data
 inputBuf:        db      0x83,0x6A,0x88,0xDE,0x9A,0xC3,0x54,0x9A
@@ -29,10 +29,10 @@ loop_start:
     
     ;Conversion of First Nibble
     mov     al, bl
-    and     al, byte [maskUpNib]
+    and     al, byte [maskUpNib]    ;Masking to isolate nibble
     shr     al, 4   ;Shifts to the right to get the upper half of the byte
     
-    ;Converts to letter if greater than or equal to 10h
+    ;Converts to ASCII letter if greater than or equal to 10h
     cmp     al, 0xA
     jge     to_letter_first
     
@@ -48,9 +48,9 @@ loop_start:
     
     ;Conversion of Second Nibble
     mov     al, bl
-    and     al, byte [maskLowNib]
+    and     al, byte [maskLowNib]    ;Masking to isolate nibble
     
-    ;Converts to letter if greater than or equal to 10h
+    ;Converts to ASCII letter if greater than or equal to 10h
     cmp     al, 0xA
     jge     to_letter_second
     
@@ -73,8 +73,11 @@ loop_start:
     
   loop_end:
   
-    ;Output Buffer
-    mov     edx, 18
+    ;Outputs Buffer
+    mov byte [outputBuf + edi], 0x0A ;Adds a newline
+    inc edi
+
+    mov     edx, edi
     mov     ecx, outputBuf
     mov     ebx, 1
     mov     eax, 4
